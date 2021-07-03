@@ -56,19 +56,19 @@ void handleNewMessages(int numNewMessages) {
 
     String from_name = bot.messages[i].from_name;
 
-    if (text == "encender") {
+    if (text.equalsIgnoreCase("encender")) {
       bot.sendMessage(chat_id, "El Foco está encendido!, servicio completado...", "");
       ledState = HIGH;
       digitalWrite(ledPin, ledState);
     }
 
-    if (text == "apagar") {
+    if (text.equalsIgnoreCase("apagar")) {
       bot.sendMessage(chat_id, "El Foco está apagado!, servicio completado...", "");
       ledState = LOW;
       digitalWrite(ledPin, ledState);
     }
 
-    if (text == "estado") {
+    if (text.equalsIgnoreCase("estado")) {
       if (digitalRead(ledPin)) {
         bot.sendMessage(chat_id, "Estado: Foco Encendido!", "");
       }
