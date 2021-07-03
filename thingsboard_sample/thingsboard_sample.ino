@@ -3,8 +3,8 @@
 #include <ESP8266WiFi.h>
 
 
-#define WIFI_AP             "Negocios Tecnologicos"
-#define WIFI_PASSWORD       "Negocios$2018"
+#define WIFI_AP             "JULIAN_RIVERA-ext"
+#define WIFI_PASSWORD       "Locator90210jrm"
 
 // See https://thingsboard.io/docs/getting-started-guides/helloworld/
 // to understand how to obtain an access token
@@ -29,12 +29,13 @@ DHT dht(DHTPIN, DHTTYPE); //Variable
 
 //Buzzer parameters
 #define BUZZERPIN 13
-const float buzzerTempe = 24;
+const float buzzerTempe = 32;
 int buzzerStatus = 0; //Apagado 1 encendido
 
 
 void setup() {
   pinMode(BUZZERPIN, OUTPUT);
+  doNotToneBuzzer();
   // initialize serial for debugging
   Serial.begin(SERIAL_DEBUG_BAUD);
   Serial.println(F("DHT11 Module!"));
@@ -44,13 +45,13 @@ void setup() {
 }
 
 void doToneBuzzer(){
-  analogWrite(BUZZERPIN, 0); // Send 1KHz sound signal...
-  delay(2000);        // ...for 2 sec
+  analogWrite(BUZZERPIN, LOW); // Send 1KHz sound signal...
+  //delay(2000);        // ...for 2 sec
 }
 
 void doNotToneBuzzer(){
-  analogWrite(BUZZERPIN, 20);     // Stop sound...
-  delay(2000);
+  analogWrite(BUZZERPIN, HIGH);     // Stop sound...
+  //delay(2000);
 }
 
 void loop() {
@@ -95,7 +96,7 @@ void loop() {
   Serial.println("Humidity: "+String(h));
   //Serial.println("HIC: "+String(hic));
   
-  tb.sendTelemetryInt("temperatura", t);
+  tb.sendTelemetryFloat("temperatura", t);
   tb.sendTelemetryFloat("humedad",h);
   //tb.sendTelemetryFloat("hic",hic);
 
