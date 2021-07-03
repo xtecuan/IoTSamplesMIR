@@ -1,26 +1,32 @@
 /*
-  Rui Santos
+    Creador:
+    Rui Santos
   Complete project details at https://RandomNerdTutorials.com/telegram-group-esp32-esp8266/
-
   Project created using Brian Lough's Universal Telegram Bot Library: https://github.com/witnessmenow/Universal-Arduino-Telegram-Bot
+    Adaptador/Traductor al espanniol:
+    Julian Rivera-Pineda
+
 */
 
-
+//Bibliotecas de WiFi de las ESP8266 Boards version 3.0.1
 #include <ESP8266WiFi.h>
 #include <WiFiClientSecure.h>
-#include <UniversalTelegramBot.h>   // Version 1.3.0 Universal Telegram Bot Library written by Brian Lough: https://github.com/witnessmenow/Universal-Arduino-Telegram-Bot
-#include <ArduinoJson.h> //Version de Libreria 6.15.2
+//Biblioteca de Universal Telegram Bot version 1.3.0
+//Biblioteca escrita por Brian Lough: https://github.com/witnessmenow/Universal-Arduino-Telegram-Bot
+#include <UniversalTelegramBot.h>
+//Biblioteca Arduino Json version 6.15.2
+#include <ArduinoJson.h>
 
-// Replace with your network credentials
+//Datos de Conexion WiFi ssid y password
 const char* ssid = "JULIAN_RIVERA-ext";
 const char* password = "Locator90210jrm";
 
-// Initialize Telegram BOT
-#define BOTtoken "1723433441:AAGI4TRFyvXIVkO1F9kKtRGkYH4DnjbOaV0"  // your Bot Token (Get from Botfather)
-
-// Use @myidbot to find out the chat ID of an individual or a group
-// Also note that you need to click "start" on a bot before it can
-// message you
+//Datos de Conexion Telegram
+//Token de la plataforma Telegram para el Bot, se obtiene con BotFather
+#define BOTtoken "1723433441:AAGI4TRFyvXIVkO1F9kKtRGkYH4DnjbOaV0"
+//Chat_id del grupo de Telegram al cual se unira el bot
+//Puede obtenerse enviando un mensaje al grupo de chat y luego cargando la siguiente URL
+//En un browser: https://api.telegram.org/${ACA_ESCRIBA_EL_TEXTO_DE_SU_BOT_TOKEN}/getUpdates
 #define CHAT_ID "-577515097"
 
 #ifdef ESP8266
@@ -30,14 +36,15 @@ X509List cert(TELEGRAM_CERTIFICATE_ROOT);
 WiFiClientSecure client;
 UniversalTelegramBot bot(BOTtoken, client);
 
-// Checks for new messages every 1 second.
+//Intervalo en que verifica por nuevos mensajes = cada segundo
 int botRequestDelay = 1000;
 unsigned long lastTimeBotRan;
 
+//Numero de pin en donde estara la sennal digital que ira al relay
 const int ledPin = 2;
 bool ledState = LOW;
 
-// Handle what happens when you receive new messages
+//Funcion que se utilizara para manejar los comandos hacia el Bombillo LED
 void handleNewMessages(int numNewMessages) {
   Serial.println("handleNewMessages");
   Serial.println(String(numNewMessages));
@@ -50,12 +57,15 @@ void handleNewMessages(int numNewMessages) {
       continue;
     }
 
-    // Print the received message
+    //Mensaje recibido con el posible comando
+    //Se imprime al puerto Serial
     String text = bot.messages[i].text;
     Serial.println(text);
 
     String from_name = bot.messages[i].from_name;
 
+    //Listado de comandos que procesara el Bot: encender, apagar y estado (Pueden ir de cualquier forma Mayusculas o Minusculas
+    //o Mezcladas)
     if (text.equalsIgnoreCase("encender")) {
       bot.sendMessage(chat_id, "El Foco está encendido!, servicio completado...", "");
       ledState = HIGH;
@@ -82,10 +92,10 @@ void handleNewMessages(int numNewMessages) {
 void setup() {
   Serial.begin(115200);
 
-#ifdef ESP8266
-  configTime(0, 0, "pool.ntp.org");      // get UTC time via NTP
-  client.setTrustAnchors(&cert); // Add root certificate for api.telegram.org
-#endif
+  #ifdef ESP8266
+    configTime(0, 0, "pool.ntp.org");      // get UTC time via NTP
+    client.setTrustAnchors(&cert); // Add root certificate for api.telegram.org
+  #endif
 
   pinMode(ledPin, OUTPUT);
 
@@ -94,9 +104,9 @@ void setup() {
   // Connect to Wi-Fi
   WiFi.mode(WIFI_STA);
   WiFi.begin(ssid, password);
-#ifdef ESP32
-  client.setCACert(TELEGRAM_CERTIFICATE_ROOT); // Add root certificate for api.telegram.org
-#endif
+  #ifdef ESP32
+    client.setCACert(TELEGRAM_CERTIFICATE_ROOT); // Add root certificate for api.telegram.org
+  #endif
   while (WiFi.status() != WL_CONNECTED) {
     delay(1000);
     Serial.println("Connecting to WiFi..");
