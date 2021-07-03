@@ -1,41 +1,40 @@
 #include "ThingsBoard.h"
-
 #include <ESP8266WiFi.h>
 
 
 #define WIFI_AP             "Negocios Tecnologicos"
 #define WIFI_PASSWORD       "Negocios$2018"
 
-// See https://thingsboard.io/docs/getting-started-guides/helloworld/
-// to understand how to obtain an access token
+
+// access token PARA LA
 #define TOKEN               "cdJUur9K8VQH9V2CfNZ1"
 #define THINGSBOARD_SERVER  "thingsboard.cloud"
 
 // Baud rate for debug serial
 #define SERIAL_DEBUG_BAUD   115200
 
-// Initialize ThingsBoard client
+// Iniciando el cliente en  ThingsBoard
 WiFiClient espClient;
-// Initialize ThingsBoard instance
+// Iniciando la instancia ThingsBoard
 ThingsBoard tb(espClient);
-// the Wifi radio's status
+// Wifi radio's status
 int status = WL_IDLE_STATUS;
 
 //DHT11 Settings
 #include "DHT.h"
-#define DHTPIN 14     // Digital pin connected to the DHT sensor
-#define DHTTYPE DHT11 //DHT Type
+#define DHTPIN 14     // Digital pin conectado al sensor DHT
+#define DHTTYPE DHT11 //DHT Tipo
 DHT dht(DHTPIN, DHTTYPE); //Variable
 
-//Buzzer parameters
+//Buzzer parametros
 #define BUZZERPIN 13
-const float buzzerTempe = 24;
-int buzzerStatus = 0; //Apagado 1 encendido
+const float buzzerTempe = 27;
+int buzzerStatus = 0; //0 Apagado 1 encendido
 
 
 void setup() {
   pinMode(BUZZERPIN, OUTPUT);
-  // initialize serial for debugging
+  // Inicializando serial para debugging
   Serial.begin(SERIAL_DEBUG_BAUD);
   Serial.println(F("DHT11 Module!"));
   dht.begin();
@@ -44,12 +43,15 @@ void setup() {
 }
 
 void doToneBuzzer(){
-  analogWrite(BUZZERPIN, 0); // Send 1KHz sound signal...
-  delay(2000);        // ...for 2 sec
+  
+  digitalWrite (BUZZERPIN, HIGH); 
+  delay(2000);        // ...esperando 2 sec
 }
 
 void doNotToneBuzzer(){
-  analogWrite(BUZZERPIN, 20);     // Stop sound...
+  
+  digitalWrite (BUZZERPIN, LOW); 
+  Serial.println("No se enciende");
   delay(2000);
 }
 
@@ -61,7 +63,7 @@ void loop() {
   }
 
   if (!tb.connected()) {
-    // Connect to the ThingsBoard
+    // Connectar a la nube ThingsBoard
     Serial.print("Connecting to: ");
     Serial.print(THINGSBOARD_SERVER);
     Serial.print(" with token ");
@@ -72,40 +74,39 @@ void loop() {
     }
   }
 
-  Serial.println("Sending data...");
+  Serial.println("Enviando datos...");
 
-  // Uploads new telemetry to ThingsBoard using MQTT.
-  // See https://thingsboard.io/docs/reference/mqtt-api/#telemetry-upload-api
-  // for more details
-  // Reading temperature or humidity takes about 250 milliseconds!
-  // Sensor readings may also be up to 2 seconds 'old' (its a very slow sensor)
+ 
   float h = dht.readHumidity();
-  // Read temperature as Celsius (the default)
+  
   float t = dht.readTemperature();
-  // Compute heat index in Celsius (isFahreheit = false)
-  //float hic = dht.computeHeatIndex(t, h, false);
-
-  // Check if any reads failed and exit early (to try again).
+  
   if (isnan(h) || isnan(t)) {
-    Serial.println(F("Failed to read from DHT11 sensor!"));
+    Serial.println(F("Falla para leer el sensor DHT11!"));
     return;
   }
 
   Serial.println("Temperature: "+String(t));
   Serial.println("Humidity: "+String(h));
-  //Serial.println("HIC: "+String(hic));
+  
   
   tb.sendTelemetryInt("temperatura", t);
   tb.sendTelemetryFloat("humedad",h);
-  //tb.sendTelemetryFloat("hic",hic);
+  
 
   //Manipulacion de Buzzer
-  if(t>=buzzerTempe){
+  if(t>=buzzerTempe){  //Si la temperatura es mayor que el valor definido se activa 
     buzzerStatus = 1;
-    doToneBuzzer();    
+    doToneBuzzer();
+    
   }else{
+    
     buzzerStatus = 0;
     doNotToneBuzzer();
+   
+   delay(2000);
+    
+    
   }
   tb.sendTelemetryFloat("buzzerStatus", buzzerStatus);
   tb.loop();
@@ -113,19 +114,19 @@ void loop() {
 
 void InitWiFi()
 {
-  Serial.println("Connecting to AP ...");
-  // attempt to connect to WiFi network
+  Serial.println("Conectado a nuestro AP ...");
+  
 
   WiFi.begin(WIFI_AP, WIFI_PASSWORD);
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
     Serial.print(".");
   }
-  Serial.println("Connected to AP");
+  Serial.println("Conectado a nuestro AP");
 }
 
 void reconnect() {
-  // Loop until we're reconnected
+  
   status = WiFi.status();
   if ( status != WL_CONNECTED) {
     WiFi.begin(WIFI_AP, WIFI_PASSWORD);
@@ -133,6 +134,6 @@ void reconnect() {
       delay(500);
       Serial.print(".");
     }
-    Serial.println("Connected to AP");
+    Serial.println("Conectado a nuestro AP");
   }
 }
