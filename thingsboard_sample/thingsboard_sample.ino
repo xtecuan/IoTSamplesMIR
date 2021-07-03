@@ -108,7 +108,8 @@ void loop() {
     buzzerStatus = 0;
     doNotToneBuzzer();
   }
-  tb.sendTelemetryFloat("buzzerStatus", buzzerStatus);
+  Serial.println("buzzerStatus: "+String(buzzerStatus));
+  tb.sendTelemetryInt("buzzerStatus", buzzerStatus);
   tb.loop();
 }
 
