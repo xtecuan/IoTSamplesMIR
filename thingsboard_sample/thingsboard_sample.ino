@@ -2,8 +2,8 @@
 #include <ESP8266WiFi.h>
 
 
-#define WIFI_AP             "Negocios Tecnologicos"
-#define WIFI_PASSWORD       "Negocios$2018"
+#define WIFI_AP             "JULIAN_RIVERA-ext"
+#define WIFI_PASSWORD       "Locator90210jrm"
 
 
 // access token PARA LA
@@ -28,13 +28,23 @@ DHT dht(DHTPIN, DHTTYPE); //Variable
 
 //Buzzer parametros
 #define BUZZERPIN 13
+<<<<<<< HEAD
 const float buzzerTempe = 27;
 int buzzerStatus = 0; //0 Apagado 1 encendido
+=======
+const float buzzerTempe = 32;
+int buzzerStatus = 0; //Apagado 1 encendido
+>>>>>>> 1d68be9700700cb69fbf8a39840d4c71aa8dc00c
 
 
 void setup() {
   pinMode(BUZZERPIN, OUTPUT);
+<<<<<<< HEAD
   // Inicializando serial para debugging
+=======
+  doNotToneBuzzer();
+  // initialize serial for debugging
+>>>>>>> 1d68be9700700cb69fbf8a39840d4c71aa8dc00c
   Serial.begin(SERIAL_DEBUG_BAUD);
   Serial.println(F("DHT11 Module!"));
   dht.begin();
@@ -43,6 +53,7 @@ void setup() {
 }
 
 void doToneBuzzer(){
+<<<<<<< HEAD
   
   digitalWrite (BUZZERPIN, HIGH); 
   delay(2000);        // ...esperando 2 sec
@@ -53,6 +64,15 @@ void doNotToneBuzzer(){
   digitalWrite (BUZZERPIN, LOW); 
   Serial.println("No se enciende");
   delay(2000);
+=======
+  analogWrite(BUZZERPIN, LOW); // Send 1KHz sound signal...
+  //delay(2000);        // ...for 2 sec
+}
+
+void doNotToneBuzzer(){
+  analogWrite(BUZZERPIN, HIGH);     // Stop sound...
+  //delay(2000);
+>>>>>>> 1d68be9700700cb69fbf8a39840d4c71aa8dc00c
 }
 
 void loop() {
@@ -90,7 +110,7 @@ void loop() {
   Serial.println("Humidity: "+String(h));
   
   
-  tb.sendTelemetryInt("temperatura", t);
+  tb.sendTelemetryFloat("temperatura", t);
   tb.sendTelemetryFloat("humedad",h);
   
 
@@ -108,7 +128,8 @@ void loop() {
     
     
   }
-  tb.sendTelemetryFloat("buzzerStatus", buzzerStatus);
+  Serial.println("buzzerStatus: "+String(buzzerStatus));
+  tb.sendTelemetryInt("buzzerStatus", buzzerStatus);
   tb.loop();
 }
 
