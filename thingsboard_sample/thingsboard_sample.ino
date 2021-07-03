@@ -3,8 +3,8 @@
 #include <ESP8266WiFi.h>
 
 
-#define WIFI_AP             "Xtecuannet"
-#define WIFI_PASSWORD       "X4tecuan$"
+#define WIFI_AP             "Negocios Tecnologicos"
+#define WIFI_PASSWORD       "Negocios$2018"
 
 // See https://thingsboard.io/docs/getting-started-guides/helloworld/
 // to understand how to obtain an access token
@@ -28,12 +28,13 @@ int status = WL_IDLE_STATUS;
 DHT dht(DHTPIN, DHTTYPE); //Variable
 
 //Buzzer parameters
-/*#define BUZZERPIN 13
+#define BUZZERPIN 13
 const float buzzerTempe = 24;
-int buzzerStatus = 0; //Apagado 1 encendido*/
+int buzzerStatus = 0; //Apagado 1 encendido
+
 
 void setup() {
-  //pinMode(BUZZERPIN, OUTPUT);
+  pinMode(BUZZERPIN, OUTPUT);
   // initialize serial for debugging
   Serial.begin(SERIAL_DEBUG_BAUD);
   Serial.println(F("DHT11 Module!"));
@@ -42,15 +43,15 @@ void setup() {
   InitWiFi();
 }
 
-/*void doToneBuzzer(){
-  tone(BUZZERPIN, 1000); // Send 1KHz sound signal...
+void doToneBuzzer(){
+  analogWrite(BUZZERPIN, 0); // Send 1KHz sound signal...
   delay(2000);        // ...for 2 sec
 }
 
 void doNotToneBuzzer(){
-  noTone(BUZZERPIN);     // Stop sound...
+  analogWrite(BUZZERPIN, 20);     // Stop sound...
   delay(2000);
-}*/
+}
 
 void loop() {
   delay(5000);
@@ -99,14 +100,14 @@ void loop() {
   //tb.sendTelemetryFloat("hic",hic);
 
   //Manipulacion de Buzzer
-  /*if(t>=buzzerTempe){
+  if(t>=buzzerTempe){
     buzzerStatus = 1;
     doToneBuzzer();    
   }else{
     buzzerStatus = 0;
     doNotToneBuzzer();
-  }*/
-
+  }
+  tb.sendTelemetryFloat("buzzerStatus", buzzerStatus);
   tb.loop();
 }
 
